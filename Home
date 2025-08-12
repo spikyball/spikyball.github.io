@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegant Static Page</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Light gray background */
+            margin: 0;
+            padding-top: 5rem; /* Space for fixed header */
+        }
+        .header-bg {
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+            backdrop-filter: blur(10px); /* Frosted glass effect */
+        }
+        .section-content {
+            min-height: calc(100vh - 5rem); /* Make sections fill remaining viewport height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: opacity 0.7s ease-in-out; /* Smooth transition for fade effect */
+        }
+        .hidden-section {
+            opacity: 0;
+            pointer-events: none; /* Prevent interaction when hidden */
+            position: absolute; /* Take out of flow but allow transitions */
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+        .active-section {
+            opacity: 1;
+            pointer-events: auto;
+            position: relative; /* Bring back to flow when active */
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Floating Header -->
+    <header class="fixed top-0 left-0 w-full z-50 shadow-md py-4 header-bg rounded-b-lg">
+        <nav class="container mx-auto flex justify-center space-x-8">
+            <a href="#section-a" class="nav-link text-lg font-semibold text-gray-700 hover:text-blue-600 transition duration-300 rounded-md px-4 py-2 hover:bg-blue-100">Section A</a>
+            <a href="#section-b" class="nav-link text-lg font-semibold text-gray-700 hover:text-blue-600 transition duration-300 rounded-md px-4 py-2 hover:bg-blue-100">Section B</a>
+            <a href="#section-c" class="nav-link text-lg font-semibold text-gray-700 hover:text-blue-600 transition duration-300 rounded-md px-4 py-2 hover:bg-blue-100">Section C</a>
+        </nav>
+    </header>
+
+    <!-- Sections Container to manage absolute positioning for transitions -->
+    <div id="sections-container" class="relative overflow-hidden">
+        <!-- Section A -->
+        <section id="section-a" class="section-content bg-gradient-to-r from-blue-500 to-indigo-600 text-white active-section">
+            <div class="p-8 max-w-2xl mx-auto rounded-lg bg-white bg-opacity-10 shadow-xl">
+                <h2 class="text-5xl font-extrabold mb-4">Welcome to Section A</h2>
+                <p class="text-xl">This is the first vibrant section. Explore its content and discover what lies ahead.</p>
+            </div>
+        </section>
+
+        <!-- Section B -->
+        <section id="section-b" class="section-content bg-gradient-to-r from-green-500 to-teal-600 text-white hidden-section">
+            <div class="p-8 max-w-2xl mx-auto rounded-lg bg-white bg-opacity-10 shadow-xl">
+                <h2 class="text-5xl font-extrabold mb-4">Journey to Section B</h2>
+                <p class="text-xl">A new perspective awaits in this refreshing green landscape. Dive deeper into our offerings.</p>
+            </div>
+        </section>
+
+        <!-- Section C -->
+        <section id="section-c" class="section-content bg-gradient-to-r from-purple-500 to-pink-600 text-white hidden-section">
+            <div class="p-8 max-w-2xl mx-auto rounded-lg bg-white bg-opacity-10 shadow-xl">
+                <h2 class="text-5xl font-extrabold mb-4">Discover Section C</h2>
+                <p class="text-xl">The final stop on our tour, filled with unique insights and exciting possibilities.</p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section-content');
+            let activeSectionId = 'section-a'; // Initially active section
+
+            // Function to show a specific section
+            const showSection = (targetId) => {
+                if (activeSectionId === targetId) return; // Already active
+
+                const currentActiveSection = document.getElementById(activeSectionId);
+                const targetSection = document.getElementById(targetId);
+
+                if (currentActiveSection) {
+                    // Start fade-out for the current active section
+                    currentActiveSection.classList.remove('active-section');
+                    currentActiveSection.classList.add('hidden-section');
+
+                    // Allow time for fade-out before activating new section if needed,
+                    // but for smooth transition, we apply active class immediately for overlap.
+                    // A longer transition duration might need a slight delay here.
+                }
+
+                if (targetSection) {
+                    // Activate the target section
+                    targetSection.classList.remove('hidden-section');
+                    targetSection.classList.add('active-section');
+                    activeSectionId = targetId; // Update active section ID
+                }
+            };
+
+            // Event listener for navigation links
+            navLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault(); // Prevent default anchor jump
+                    const targetId = link.getAttribute('href').substring(1); // Get section ID from href
+                    showSection(targetId);
+                });
+            });
+
+            // Handle initial load based on URL hash (optional, but good for direct links)
+            const initialHash = window.location.hash.substring(1);
+            if (initialHash && document.getElementById(initialHash)) {
+                // Remove initial active-section from default if hash exists
+                document.getElementById(activeSectionId).classList.remove('active-section');
+                document.getElementById(activeSectionId).classList.add('hidden-section');
+                showSection(initialHash);
+            }
+        });
+    </script>
+
+</body>
+</html>
