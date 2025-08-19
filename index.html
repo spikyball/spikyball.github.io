@@ -1,140 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elegant Static Page</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts - Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Light gray background */
-            margin: 0;
-            /* Responsive padding-top handled by Tailwind classes on body */
-        }
-        .header-bg {
-            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
-            backdrop-filter: blur(10px); /* Frosted glass effect */
-        }
-        .section-content {
-            /* Responsive min-height based on header height */
-            min-height: calc(100vh - 4rem); /* Default for small screens (header ~4rem) */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            transition: opacity 0.7s ease-in-out; /* Smooth transition for fade effect */
-        }
-        @media (min-width: 768px) { /* Tailwind's 'md' breakpoint */
-            .section-content {
-                min-height: calc(100vh - 5rem); /* For medium and larger screens (header ~5rem) */
-            }
-        }
-        .hidden-section {
-            opacity: 0;
-            pointer-events: none; /* Prevent interaction when hidden */
-            position: absolute; /* Take out of flow but allow transitions */
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-        }
-        .active-section {
-            opacity: 1;
-            pointer-events: auto;
-            position: relative; /* Bring back to flow when active */
-            z-index: 1;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Elegant Static Page</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    html, body { height: 100%; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f4f8; /* Light gray background */
+      margin: 0;
+    }
+    html { scroll-behavior: smooth; }
+
+    /* Frosted header */
+    .header-bg {
+      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+    }
+
+    /* Scroll snap container & sections */
+    .snap-container {
+      scroll-snap-type: y mandatory;
+    }
+    .snap-section {
+      scroll-snap-align: start;
+      /* account for fixed header when using anchor links */
+      scroll-margin-top: 5rem; /* fallback */
+    }
+    @media (min-width: 768px) {
+      .snap-section { scroll-margin-top: 6rem; }
+    }
+
+    /* Optional: active link styles toggled by JS */
+    .nav-link-active {
+      color: rgb(37, 99, 235); /* Tailwind's blue-600 */
+      background-color: rgba(37, 99, 235, 0.08);
+    }
+  </style>
 </head>
-<body class="text-gray-800 pt-16 md:pt-20">
-    <!-- pt-16 (4rem) for small screens, pt-20 (5rem) for medium and up -->
+<body class="text-gray-800 pt-20 md:pt-24">
 
-    <!-- Floating Header -->
-    <header class="fixed top-0 left-0 w-full z-50 shadow-md py-4 header-bg rounded-b-lg">
-        <nav class="container mx-auto flex justify-center space-x-4 md:space-x-8">
-            <a href="#section-a" class="nav-link text-base md:text-lg font-semibold text-gray-700 hover:text-blue-600 transition duration-300 rounded-md px-3 py-2 md:px-4 md:py-2 hover:bg-blue-100">Section A</a>
-            <a href="#section-b" class="nav-link text-base md:text-lg font-semibold text-gray-700 hover:text-blue-600 transition duration-300 rounded-md px-3 py-2 md:px-4 md:py-2 hover:bg-blue-100">Section B</a>
-            <a href="#section-c" class="nav-link text-base md:text-lg font-semibold text-gray-700 hover:text-blue-600 transition duration-300 rounded-md px-3 py-2 md:px-4 md:py-2 hover:bg-blue-100">Section C</a>
-        </nav>
-    </header>
+  <!-- Fixed Header -->
+  <header class="fixed top-0 left-0 w-full z-50 shadow-md header-bg rounded-b-lg">
+    <nav class="container mx-auto flex justify-center gap-2 md:gap-4 px-3 py-3 md:py-4">
+      <a href="#section-a" class="nav-link text-sm md:text-base font-semibold text-gray-700 hover:text-blue-600 transition rounded-md px-3 py-2 hover:bg-blue-100">Section A</a>
+      <a href="#section-b" class="nav-link text-sm md:text-base font-semibold text-gray-700 hover:text-blue-600 transition rounded-md px-3 py-2 hover:bg-blue-100">Section B</a>
+      <a href="#section-c" class="nav-link text-sm md:text-base font-semibold text-gray-700 hover:text-blue-600 transition rounded-md px-3 py-2 hover:bg-blue-100">Section C</a>
+    </nav>
+  </header>
 
-    <!-- Sections Container to manage absolute positioning for transitions -->
-    <div id="sections-container" class="relative overflow-hidden">
-        <!-- Section A -->
-        <section id="section-a" class="section-content bg-gradient-to-r from-blue-500 to-indigo-600 text-white active-section">
-            <div class="p-4 sm:p-6 md:p-8 max-w-2xl mx-auto rounded-lg bg-white bg-opacity-10 shadow-xl">
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-2 sm:mb-4">Welcome to Section A</h2>
-                <p class="text-base sm:text-lg md:text-xl">This is the first vibrant section. Explore its content and discover what lies ahead.</p>
-            </div>
-        </section>
+  <!-- Scrollable Sections -->
+  <main id="sections-container" class="snap-container">
+    <!-- Section A -->
+    <section id="section-a" class="snap-section min-h-[calc(100vh-5rem)] md:min-h-[calc(100vh-6rem)] flex items-center justify-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+      <div class="p-6 md:p-10 max-w-2xl mx-4 md:mx-auto rounded-2xl bg-white/10 shadow-xl text-center">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3 md:mb-4">Welcome to Section A</h2>
+        <p class="text-base sm:text-lg md:text-xl">This is the first vibrant section. Explore its content and discover what lies ahead.</p>
+      </div>
+    </section>
 
-        <!-- Section B -->
-        <section id="section-b" class="section-content bg-gradient-to-r from-green-500 to-teal-600 text-white hidden-section">
-            <div class="p-4 sm:p-6 md:p-8 max-w-2xl mx-auto rounded-lg bg-white bg-opacity-10 shadow-xl">
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-2 sm:mb-4">Journey to Section B</h2>
-                <p class="text-base sm:text-lg md:text-xl">A new perspective awaits in this refreshing green landscape. Dive deeper into our offerings.</p>
-            </div>
-        </section>
+    <!-- Section B -->
+    <section id="section-b" class="snap-section min-h-[calc(100vh-5rem)] md:min-h-[calc(100vh-6rem)] flex items-center justify-center bg-gradient-to-r from-green-500 to-teal-600 text-white">
+      <div class="p-6 md:p-10 max-w-2xl mx-4 md:mx-auto rounded-2xl bg-white/10 shadow-xl text-center">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3 md:mb-4">Journey to Section B</h2>
+        <p class="text-base sm:text-lg md:text-xl">A new perspective awaits in this refreshing green landscape. Dive deeper into our offerings.</p>
+      </div>
+    </section>
 
-        <!-- Section C -->
-        <section id="section-c" class="section-content bg-gradient-to-r from-purple-500 to-pink-600 text-white hidden-section">
-            <div class="p-4 sm:p-6 md:p-8 max-w-2xl mx-auto rounded-lg bg-white bg-opacity-10 shadow-xl">
-                <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-2 sm:mb-4">Discover Section C</h2>
-                <p class="text-base sm:text-lg md:text-xl">The final stop on our tour, filled with unique insights and exciting possibilities.</p>
-            </div>
-        </section>
-    </div>
+    <!-- Section C -->
+    <section id="section-c" class="snap-section min-h-[calc(100vh-5rem)] md:min-h-[calc(100vh-6rem)] flex items-center justify-center bg-gradient-to-r from-purple-500 to-pink-600 text-white">
+      <div class="p-6 md:p-10 max-w-2xl mx-4 md:mx-auto rounded-2xl bg-white/10 shadow-xl text-center">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-3 md:mb-4">Discover Section C</h2>
+        <p class="text-base sm:text-lg md:text-xl">The final stop on our tour, filled with unique insights and exciting possibilities.</p>
+      </div>
+    </section>
+  </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('.section-content');
-            let activeSectionId = 'section-a'; // Initially active section
+  <script>
+    // Highlight active nav link based on scroll position
+    document.addEventListener('DOMContentLoaded', () => {
+      const sections = [...document.querySelectorAll('section.snap-section')];
+      const navLinks = [...document.querySelectorAll('.nav-link')];
+      const linkMap = new Map(navLinks.map(l => [l.getAttribute('href').slice(1), l]));
 
-            // Function to show a specific section
-            const showSection = (targetId) => {
-                if (activeSectionId === targetId) return; // Already active
+      const setActive = (id) => {
+        navLinks.forEach(l => l.classList.remove('nav-link-active'));
+        const active = linkMap.get(id);
+        if (active) active.classList.add('nav-link-active');
+      };
 
-                const currentActiveSection = document.getElementById(activeSectionId);
-                const targetSection = document.getElementById(targetId);
+      // In case the page loads with a hash
+      if (location.hash) setActive(location.hash.slice(1));
+      else setActive('section-a');
 
-                if (currentActiveSection) {
-                    // Start fade-out for the current active section
-                    currentActiveSection.classList.remove('active-section');
-                    currentActiveSection.classList.add('hidden-section');
-                }
-
-                if (targetSection) {
-                    // Activate the target section
-                    targetSection.classList.remove('hidden-section');
-                    targetSection.classList.add('active-section');
-                    activeSectionId = targetId; // Update active section ID
-                }
-            };
-
-            // Event listener for navigation links
-            navLinks.forEach(link => {
-                link.addEventListener('click', (event) => {
-                    event.preventDefault(); // Prevent default anchor jump
-                    const targetId = link.getAttribute('href').substring(1); // Get section ID from href
-                    showSection(targetId);
-                });
-            });
-
-            // Handle initial load based on URL hash (optional, but good for direct links)
-            const initialHash = window.location.hash.substring(1);
-            if (initialHash && document.getElementById(initialHash)) {
-                // Remove initial active-section from default if hash exists
-                document.getElementById(activeSectionId).classList.remove('active-section');
-                document.getElementById(activeSectionId).classList.add('hidden-section');
-                showSection(initialHash);
-            }
+      // IntersectionObserver to update active link as sections enter view
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+          }
         });
-    </script>
+      }, {
+        root: null,
+        rootMargin: '0px 0px -50% 0px', // triggers when top half passes
+        threshold: 0.1
+      });
 
+      sections.forEach(sec => observer.observe(sec));
+    });
+  </script>
 </body>
 </html>
